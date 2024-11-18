@@ -48,3 +48,14 @@ public class Interceptor implements HandlerInterceptor {
     }
 }
 ```
+
+## Step 3 - Update the WebMvcConfigurer to Register the Interceptor
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new Interceptor());
+    }
+}
+```
