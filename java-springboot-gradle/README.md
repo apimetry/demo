@@ -70,3 +70,7 @@ Then attach the agent to your application via the command line arguments
 ```
 java -javaagent:/optel-agent.jar -jar /your/app.jar
 ```
+
+
+## Next Reading
+- Configure Open Telemetry by Environment Variables
