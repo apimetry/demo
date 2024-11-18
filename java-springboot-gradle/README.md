@@ -59,3 +59,14 @@ public class WebConfig implements WebMvcConfigurer {
     }
 }
 ```
+
+## Step 4 - Add the Open Telemetry Agent when Running the Application
+Assuming you run the application as a JAR file in a Dockerfile, add the following steps in the Dockerfile
+```Dockerfile
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.10.0/opentelemetry-javaagent.jar /optel-agent.jar
+RUN chmod a+r /optel-agent.jar
+```
+Then attach the agent to your application via the command line arguments
+```
+java -javaagent:/optel-agent.jar -jar /your/app.jar
+```
