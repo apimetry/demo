@@ -1,9 +1,9 @@
-package demojavaapp;
+package demo;
 
-import demojavaapp.io.CreateOrderRequest;
-import demojavaapp.io.CreateOrderResponse;
-import demojavaapp.io.GetOrderResponse;
-import demojavaapp.io.ShipOrderRequest;
+import demo.io.CreateOrderRequest;
+import demo.io.CreateOrderResponse;
+import demo.io.GetOrderResponse;
+import demo.io.ShipOrderRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;

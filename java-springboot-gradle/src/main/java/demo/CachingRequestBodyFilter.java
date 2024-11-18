@@ -1,4 +1,4 @@
-package demojavaapp;
+package demo;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

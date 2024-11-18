@@ -1,6 +1,6 @@
-package demojavaapp.io;
+package demo.io;
 
-import demojavaapp.Order;
+import demo.Order;
 
 import java.util.List;
 

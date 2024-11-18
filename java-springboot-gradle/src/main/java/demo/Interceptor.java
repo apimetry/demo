@@ -1,4 +1,4 @@
-package demojavaapp;
+package demo;
 
 import io.opentelemetry.api.trace.Span;
 import jakarta.servlet.http.HttpServletRequest;

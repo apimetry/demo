@@ -1,6 +1,6 @@
-package demojavaapp;
+package demo;
 
-import demojavaapp.io.PurchaseItem;
+import demo.io.PurchaseItem;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

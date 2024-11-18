@@ -1,4 +1,4 @@
-package demojavaapp.io;
+package demo.io;
 
 public enum ShipmentMethod {
     EXPRESS,

@@ -1,8 +1,8 @@
-package demojavaapp;
+package demo;
 
-import demojavaapp.io.CreateMerchantRequest;
-import demojavaapp.io.CreateMerchantResponse;
-import demojavaapp.io.GetMerchantOrdersResponse;
+import demo.io.CreateMerchantRequest;
+import demo.io.CreateMerchantResponse;
+import demo.io.GetMerchantOrdersResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

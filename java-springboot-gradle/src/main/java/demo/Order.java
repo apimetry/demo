@@ -1,7 +1,7 @@
-package demojavaapp;
+package demo;
 
-import demojavaapp.io.PurchaseItem;
-import demojavaapp.io.ShipmentMethod;
+import demo.io.PurchaseItem;
+import demo.io.ShipmentMethod;
 
 import java.util.ArrayList;
 import java.util.List;
