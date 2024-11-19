@@ -1,0 +1,22 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "9353:9353"
+    environment:
+      - OTEL_SERVICE_NAME=my-app
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://collector:4318
+    networks:
+      - net
+  collector:
+    image: otel/opentelemetry-collector:0.104.0
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    volumes:
+      - ./otel-config.yml:/etc/otel-collector-config.yml
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge

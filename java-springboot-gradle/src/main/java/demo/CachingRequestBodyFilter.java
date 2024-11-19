@@ -9,6 +9,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 public class CachingRequestBodyFilter extends GenericFilterBean {
@@ -16,21 +17,20 @@ public class CachingRequestBodyFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        chain.doFilter(new CachedRequest(httpRequest), response);
+        chain.doFilter(new CacheRequest(httpRequest), response);
     }
 
-    static class CachedRequest extends HttpServletRequestWrapper {
+    static class CacheRequest extends HttpServletRequestWrapper {
 
         private byte[] cache;
 
-        public CachedRequest(HttpServletRequest servlet) {
+        public CacheRequest(HttpServletRequest servlet) {
             super(servlet);
             this.cache = null;
         }
 
 
-        @Override
-        public CachedInputStream getInputStream() throws IOException {
+        public CachedInputStream getAndCacheInputStream() throws IOException {
             if (cache != null) {
                 return new CachedInputStream(new ByteArrayInputStream(this.cache));
             }
@@ -45,6 +45,14 @@ public class CachingRequestBodyFilter extends GenericFilterBean {
 
             this.cache = buffer.toByteArray();
             return new CachedInputStream(new ByteArrayInputStream(this.cache));
+        }
+
+        @Override
+        public ServletInputStream getInputStream() throws IOException {
+            if (cache != null) {
+                return new CachedInputStream(new ByteArrayInputStream(this.cache));
+            }
+            return super.getInputStream();
         }
     }
 

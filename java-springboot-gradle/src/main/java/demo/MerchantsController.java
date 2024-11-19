@@ -17,12 +17,14 @@ public class MerchantsController {
 
     @PostMapping
     @NoAuth
+    @ApimetryIgnore
     public CreateMerchantResponse create(@RequestBody CreateMerchantRequest request) {
         Merchant merchant = this.database.createMerchant(request.name());
         return new CreateMerchantResponse(merchant.id(), merchant.authToken(), merchant.name());
     }
 
     @GetMapping(path = "/orders")
+    @ApimetryIgnoreBody
     public GetMerchantOrdersResponse getOrders(@RequestAttribute("Merchant-ID") int merchantId) {
         return new GetMerchantOrdersResponse(this.database.findMerchantOrders(merchantId));
     }
