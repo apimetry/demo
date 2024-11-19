@@ -1,4 +1,6 @@
 # Java / Spring Boot / Gradle Integration Demo
+The following guide is a shortened and minimal summary of the Spring Boot project in this directory. The actual code in this
+directory will contain more details than what is written here.
 
 ## Step 1 - Add Open Telemetry SDK
 Open `build.gradle` and add the following
@@ -28,14 +30,7 @@ public class Interceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         final String auth = request.getHeader("Authorization");
-        if (auth == null || auth.isBlank()) {
-            HandlerMethod method = (HandlerMethod) handler;
-            if (method.getMethodAnnotation(NoAuth.class) != null) {
-                return true;
-            }
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-        
+       
         final Merchant merchant = this.database.findMerchantByAuthToken(auth)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         
@@ -154,7 +149,7 @@ public class CachingRequestBodyFilter extends GenericFilterBean {
     }
 }
 ```
-The in our interceptor we read the HTTP body and add it as an attribute
+Then in our interceptor we read the HTTP body and add it as an attribute
 ```java
 if (span != null) {
     span.setAttribute("apimetry.customer.id", merchant.id());
@@ -162,5 +157,72 @@ if (span != null) {
     if (request instanceof CachingRequestBodyFilter.CacheRequest wrapper) {
         span.setAttribute("http.body", wrapper.getAndCacheInputStream().toString());
     }
+}
+```
+## (Optional) Step 6 - Support an Ignore Apimetry
+It will be a common case that particular endpoints should not be integrated with Apimetry, or that it is not relevant
+to send the HTTP body (for example the body is an image or non JSON).
+
+To achieve this we will two annotations that we can add to our endpoints
+- `@ApimetryIgnore` If the entire endpoint usage should be excluded from Apimetry
+- `@ApimetryIgnoreBody` If we should not add the body as an attribute
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ApimetryIgnore {
+}
+```
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ApimetryIgnoreBody {
+}
+```
+
+Now in our interceptor we need to add support for these annotations
+```java
+@Override
+public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    final String auth = request.getHeader("Authorization");
+
+    final Merchant merchant = this.database.findMerchantByAuthToken(auth)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+
+    final boolean ignore = (handler instanceof HandlerMethod method)
+        ? method.getMethodAnnotation(ApimetryIgnore.class) != null
+        : false;
+
+    if (ignore) {
+        return true;
+    }
+    final Span span = Span.current();
+    if (span != null) {
+        span.setAttribute("apimetry.customer.id", merchant.id());
+        span.setAttribute("apimetry.customer.name", merchant.name());
+        final boolean includeBody = (handler instanceof HandlerMethod method)
+            ? method.getMethodAnnotation(ApimetryIgnoreBody.class) == null
+            : true;
+        if (includeBody && request instanceof CachingRequestBodyFilter.CacheRequest wrapper) {
+            span.setAttribute("http.body", wrapper.getAndCacheInputStream().toString());
+        }
+    }
+    return true;
+}
+```
+
+Then we can use these annotations on the methods to control what endpoints are monitored by Apimetry
+```java
+@GetMapping("/foo")
+@ApimetryIgnore
+public FooResponse foo() {
+    
+}
+
+@PostMapping("/bar")
+@ApimetryIgnoreBody
+public BarResponse bar(@RequestBody BarRequest request) {
+    
 }
 ```
