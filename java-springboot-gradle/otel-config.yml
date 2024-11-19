@@ -9,10 +9,6 @@ processors:
   batch:
 
 exporters:
-  otlphttp:
-    endpoint: http://ingest:1992 # use 4318
-    encoding: json
-    compression: none
   logging:
     loglevel: debug
 
@@ -22,4 +18,4 @@ service:
     traces:
       receivers:  [ otlp ]
       processors: [ batch ]
-      exporters:  [ logging, otlphttp ]
+      exporters:  [ logging ]
