@@ -1,4 +1,4 @@
-# Java / Spring Boot Integration Demo
+# Java / Spring Boot - Integration Demo
 The following guide is a shortened and minimal summary of the Spring Boot project in this directory. The actual code in this
 directory will contain more details than what is written here.
 
